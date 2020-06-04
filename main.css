@@ -4,7 +4,7 @@ html {
 body {
   min-height: 100%;
   font-family: Helvetica, sans-serif;
-  font-size: calc(1rem + 0.5vw);
+  font-size: calc(1em + 0.5vw);
   font-weight: lighter;
 }
 h5, h6 {
@@ -12,4 +12,15 @@ h5, h6 {
 }
 table, th, td {
   border: 0.125rem solid #000;
+}
+.table-container {
+  display: flex;
+  flex-flow: row wrap;
+}
+.handle-dir-content {
+  margin-left: 0.125rem;
+  border: 0.125rem solid #000;
+  flex-grow: 1;
+  justify-content: space-around;
+  text-align: center;
 }
