@@ -14,41 +14,45 @@
 
     /* ----------- USEFUL DIRECTORY INFORMATIONS ----------- */
     echo '<header>';
+    echo '<div class="directory-container">';
     // name of the host server, e.g. my.local
-    echo 'server name: ' . $_SERVER['SERVER_NAME'] . '<br>';
+    echo '<h2>server name: <span class="directory-info">' . $_SERVER['SERVER_NAME'] . '</span></h2><br>';
     // filename of the currently executing script
-    echo 'php self: ' . $_SERVER['PHP_SELF'] . '<br>';
+    echo '<h2>script name with php self: <span class="directory-info">' . $_SERVER['PHP_SELF'] . '</span></h2><br>';
     // current directory, e.g. files-explorer
-    echo 'current directory: ' . basename(getcwd()) . '<br>';
+    echo '<h2>script folder #1: <span class="directory-info">' . basename(getcwd()) . '</span></h3><br>';
+    // current directory, e.g. files-explorer
+    echo '<h2>script folder #2: <span class="directory-info">' . basename(dirname(__FILE__)) . '</span></h2><br>';
     // absolute path, e.g. /Applications/MAMP/htdocs/files-explorer/index.php
     $path = $_SERVER['DOCUMENT_ROOT'] . $_SERVER['SCRIPT_NAME'];
-    echo 'absolute path: ' . $path . '<br>';
+    echo '<h2>absolute path: <span class="directory-info">' . $path . '</span></h2><br>';
     // site's root path including the script, e.g. /Applications/MAMP/htdocs/files-explorer/index.php
-    echo 'script directory: ' . realpath(__FILE__) . '<br>';
+    echo '<h2>script directory: <span class="directory-info">' . realpath(__FILE__) . '</span></h2><br>';
     // site's root path without the script's filename, e.g. /Applications/MAMP/htdocs/files-explorer/
     define('ROOT_DIR', realpath(__DIR__));
-    echo 'root directory: ' . ROOT_DIR . '<br>';
+    echo '<h2>root directory: <span class="directory-info">' . ROOT_DIR . '</span></h2><br>';
+    echo '</div>';
     echo '</header>';
     /* --------------------------------- */
 
     echo '<br>';
     echo '<main>';
-    echo '<section><div>';
+    echo '<section><div class="current-directory-container">';
 
     /* ----------- CHANGE DIRECTORY ----------- */
     // check whether a folder has been clicked
     if (isset($_POST['selected_item'])) {
       // store <form> passed value
       $selected_item = $_POST['selected_item'];
-      echo 'selected item: ' . $selected_item . '<br>';
+      echo '<h4>selected item: <span class="directory-info">' . $selected_item . '</span></h4><br>';
       // check whether to move to a new directory or not
       if (chdir($selected_item)) {
         chdir($selected_item);
-        echo 'directory successfully changed' . '<br>';
+        echo '<h4>directory successfully changed!</h4><br>';
       } else {
         chdir(getcwd());
         // $selected_item = getcwd();
-        echo 'failed to change directory' . '<br>';
+        echo '<h4>failed to change directory!</h4><br>';
       }
     }
     /* --------------------------------- */
@@ -62,13 +66,14 @@
       $cwd = explode(DIRECTORY_SEPARATOR, getcwd());
       // get parent directory of every file and folder
       $parent_directory = DIRECTORY_SEPARATOR . $cwd[sizeof($cwd) - 1] . DIRECTORY_SEPARATOR;
-      echo "cwd different than virtualhost" . '<br>';
+      echo '<h4>parent directory: <span class="directory-info">' . $parent_directory . '</span></h4><br>';
+      echo '<h4>cwd different than virtualhost</h4><br>';
     } else {
       // store absolute path as a single value array
       $cwd = array(getcwd());
       // add a slash
       $parent_directory = DIRECTORY_SEPARATOR;
-      echo "cwd same as virtualhost" . '<br>';
+      echo '<h4>cwd same as virtualhost</h4><br>';
     }
     /* --------------------------------- */
     echo '</div></section>';
@@ -76,21 +81,28 @@
 
     /* ----------- ITERATE OVER CURRENT DIRECTORY ----------- */
     // get current working directory
-    $cwd_contents = scandir(getcwd());
-    print_r($cwd_contents);
+    $cwd_content = scandir(getcwd());
 
-    echo '<section><div class="test-container">';
+    echo '<section><div class="content-container">';
     // iterate over directory
-    foreach ($cwd_contents as $item) {
-      $absolute_item_path = ROOT_DIR . $parent_directory . $item;
+    foreach ($cwd_content as $item) {
+      /*
+      echo "parent
+       directory: " . $parent_directory . '<br>';
+      */
       // check whether the item is a directory
-      if (is_dir($absolute_item_path)) {
+      if (is_dir(realpath($item))) {
         // add form tag with post method
-        echo '<form method="post" action="" enctype="application/x-www-form-urlencoded"><input type="hidden" name="selected_item" value="' . $absolute_item_path . '"><a class="fa fa-folder-o" href="' . $parent_directory . $item . '"><button type="submit">' . preg_replace('/\\.[^.\\s]{3,4}$/', '', $item) . '</button></a></form>' . '<br>';
+        echo '<form method="post" action="" enctype="application/x-www-form-urlencoded">';
+        echo '<input type="hidden" name="selected_item" value="' . realpath($item) . '">';
+        echo '<a class="fa fa-folder-o" href="' . $parent_directory . $item . '">';
+        echo '<button type="submit">' . preg_replace('/\\.[^.\\s]{3,4}$/', '', $item) . '</button>';
+        echo '</a>';
+        echo '</form>' . '<br>';
         // or a file
-      } elseif (is_file($absolute_item_path)) {
+      } elseif (is_file(realpath($item))) {
         // add anchor tag
-        echo '<a class="fa fa-file-o" href="' . $parent_directory . $item . '"><button type="submit">' . preg_replace('/\\.[^.\\s]{3,4}$/', '', $item) . '</button></a>' . '<br>';
+        echo '<a class="fa fa-file-o file" href="' . $parent_directory . $item . '"><button type="submit">' . preg_replace('/\\.[^.\\s]{3,4}$/', '', $item) . '</button></a>' . '<br>';
       }
     }
     echo '</div></section>';
@@ -99,5 +111,6 @@
 
     ?>
 
+    <script type="text/javascript" src="script.js"></script>
   </body>
 </html>
