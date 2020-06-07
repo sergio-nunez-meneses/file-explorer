@@ -86,23 +86,40 @@
     echo '<section><div class="content-container">';
     // iterate over directory
     foreach ($cwd_content as $item) {
+      $item_name = preg_replace('/\\.[^.\\s]{3,4}$/', '', $item);
+      $file_type = str_replace('/', ' ', mime_content_type(realpath($item)));
       /*
       echo "parent
        directory: " . $parent_directory . '<br>';
       */
       // check whether the item is a directory
       if (is_dir(realpath($item))) {
-        // add form tag with post method
-        echo '<form method="post" action="" enctype="application/x-www-form-urlencoded">';
-        echo '<input type="hidden" name="selected_item" value="' . realpath($item) . '">';
-        echo '<a class="fa fa-folder-o" href="' . $parent_directory . $item . '">';
-        echo '<button type="submit">' . preg_replace('/\\.[^.\\s]{3,4}$/', '', $item) . '</button>';
-        echo '</a>';
-        echo '</form>' . '<br>';
+        if ($item === '.') {
+          // add form tag with post method
+          echo '<form method="post" action="" enctype="application/x-www-form-urlencoded">';
+          echo '<input type="hidden" name="selected_item" value="' . realpath($item) . '">';
+          echo '<a class="fa fa-folder-open-o" href="' . $parent_directory . $item . '">';
+          echo '<button type="submit">' . $item_name . '</button>';
+          echo '</a>';
+          echo '</form>' . '<br>';
+        } else {
+          echo '<form method="post" action="" enctype="application/x-www-form-urlencoded">';
+          echo '<input type="hidden" name="selected_item" value="' . realpath($item) . '">';
+          echo '<a class="fa fa-folder-o" href="' . $parent_directory . $item . '">';
+          echo '<button type="submit">' . $item_name . '</button>';
+          echo '</a>';
+          echo '</form>' . '<br>';
+        }
         // or a file
       } elseif (is_file(realpath($item))) {
-        // add anchor tag
-        echo '<a class="fa fa-file-o file" href="' . $parent_directory . $item . '"><button type="submit">' . preg_replace('/\\.[^.\\s]{3,4}$/', '', $item) . '</button></a>' . '<br>';
+        if (strpos($file_type, 'image') !== false) {
+          // add anchor tag to open file
+          echo '<a class="fa fa-file-image-o file" href="' . $parent_directory . $item . '"><button type="submit">' . $item_name . '</button></a>' . '<br>';
+        } elseif (strpos($file_type, 'text') !== false) {
+          echo '<a class="fa fa-file-text-o file" href="' . $parent_directory . $item . '"><button type="submit">' . $item_name . '</button></a>' . '<br>';
+        } elseif (strpos($file_type, 'audio') !== false) {
+          echo '<a class="fa fa-file-sound-o file" href="' . $parent_directory . $item . '"><button type="submit">' . $item_name . '</button></a>' . '<br>';
+        }
       }
     }
     echo '</div></section>';
