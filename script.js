@@ -1,4 +1,4 @@
-// get files
+// get all <a> tags containing files
 const displayFile = () => {
   const files = document.querySelectorAll('[class*="file"]');
   for (let n in files) {
