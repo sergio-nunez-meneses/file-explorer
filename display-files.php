@@ -14,9 +14,9 @@
 
     if (isset($_POST['selected_file'])) {
       $selected_file = $_POST['selected_file'];
-      echo $selected_file;
+      echo dirname($selected_file);
       echo '<div class="display-content">';
-      echo '<a href="index.php">&times;</a>';
+      echo '<a class="go-to-parent-directory" href="' . '">&times;</a>';
       echo '<img src="intro-bg.jpg" class="test-img">';
       echo '</div>';
     }

@@ -35,11 +35,10 @@
     echo '</header>';
     /* --------------------------------- */
 
-    echo '<br>';
     echo '<main>';
-    echo '<section><div class="current-directory-container">';
 
     /* ----------- CHANGE DIRECTORY ----------- */
+    echo '<section><div class="current-directory-container">';
     // check whether a folder has been clicked
     if (isset($_POST['selected_item'])) {
       // store <form> passed value
@@ -57,8 +56,6 @@
     }
     /* --------------------------------- */
 
-    echo '<br>';
-
     /* ----------- CHECK CURRENT DIRECTORY ----------- */
     // check whether cwd is different than the virtual host
     if (getcwd() !== ROOT_DIR) {
@@ -75,9 +72,8 @@
       $parent_directory = DIRECTORY_SEPARATOR;
       echo '<h4>cwd same as virtualhost</h4><br>';
     }
-    /* --------------------------------- */
     echo '</div></section>';
-    echo '<br>';
+    /* --------------------------------- */
 
     /* ----------- ITERATE OVER CURRENT DIRECTORY ----------- */
     // get current working directory
@@ -121,17 +117,28 @@
       }
     }
     echo '</div></section>';
+    /* --------------------------------- */
 
-    /* ----------- TEST ZONE ----------- */
-    echo '<form method="post" action="display-files.php" enctype="application/x-www-form-urlencoded">';
-    echo '<input type="hidden" name="selected_file" value="' . getcwd() . DIRECTORY_SEPARATOR . 'intro-bg.jpg">';
-    echo '<a class="fa fa-folder-o" href="' . $parent_directory . 'intro-bg.jpg">';
-    echo '<button type="submit">Click Me!</button>';
-    echo '</a>';
-    echo '</form>' . '<br>';
+    /* ----------- MODAL ----------- */
+    echo "<div id=\"myModal\" class=\"modal\">";
+    echo "<span id=\"close\" class=\"go-to-parent-directory\">&times;</span>";
+    echo "<div class=\"display-content\">";
+    echo "<div class=\"slide\">";
+    echo "<img src=\"intro-bg.jpg\" class=\"file test-img\">";
+    echo "</div>";
+    echo "</div>";
+    echo "</div>";
     /* --------------------------------- */
 
     echo '</main>';
+
+
+
+    /* ----------- TEST ZONE ----------- */
+
+    /* --------------------------------- */
+
+
 
 
 
