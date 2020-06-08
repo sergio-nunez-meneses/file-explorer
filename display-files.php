@@ -8,9 +8,17 @@
     <link rel="stylesheet" href="main.css">
     <title>File Explorer</title>
   </head>
-  <body>
+  <body style="background-color: rgba(0, 0, 0, 0.8);">
 
-    
+    <?php
 
-  </body>
-</html>
+    if (isset($_POST['selected_file'])) {
+      $selected_file = $_POST['selected_file'];
+      echo $selected_file;
+      echo '<div class="display-content">';
+      echo '<a href="index.php">&times;</a>';
+      echo '<img src="intro-bg.jpg" class="test-img">';
+      echo '</div>';
+    }
+
+    ?>

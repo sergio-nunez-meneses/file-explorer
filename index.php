@@ -88,10 +88,6 @@
     foreach ($cwd_content as $item) {
       $item_name = preg_replace('/\\.[^.\\s]{3,4}$/', '', $item);
       $file_type = str_replace('/', ' ', mime_content_type(realpath($item)));
-      /*
-      echo "parent
-       directory: " . $parent_directory . '<br>';
-      */
       // check whether the item is a directory
       if (is_dir(realpath($item))) {
         if ($item === '.') {
@@ -119,12 +115,27 @@
           echo '<a class="fa fa-file-text-o file" href="' . $parent_directory . $item . '"><button type="submit">' . $item_name . '</button></a>' . '<br>';
         } elseif (strpos($file_type, 'audio') !== false) {
           echo '<a class="fa fa-file-sound-o file" href="' . $parent_directory . $item . '"><button type="submit">' . $item_name . '</button></a>' . '<br>';
+        } else {
+          echo '<a class="fa fa fa-file-o file" href="' . $parent_directory . $item . '"><button type="submit">' . $item_name . '</button></a>' . '<br>';
         }
       }
     }
     echo '</div></section>';
-    echo '</main>';
+
+    /* ----------- TEST ZONE ----------- */
+    echo '<form method="post" action="display-files.php" enctype="application/x-www-form-urlencoded">';
+    echo '<input type="hidden" name="selected_file" value="' . getcwd() . DIRECTORY_SEPARATOR . 'intro-bg.jpg">';
+    echo '<a class="fa fa-folder-o" href="' . $parent_directory . 'intro-bg.jpg">';
+    echo '<button type="submit">Click Me!</button>';
+    echo '</a>';
+    echo '</form>' . '<br>';
     /* --------------------------------- */
+
+    echo '</main>';
+
+
+
+
 
     ?>
 
