@@ -7,6 +7,9 @@ body {
   font-size: calc(0.5rem + 0.5vw);
   font-weight: lighter;
 }
+table, th, td {
+  border: 0.125rem solid #000;
+}
 input, a, button {
   margin: 0.0625rem 0.1875rem;
   font-size: 1em;
@@ -16,27 +19,30 @@ input, a, button {
   display: flex;
   justify-content: center;
 }
-.current-directory-container {
+.directory-container {
+  display: flex;
+}
+.cwd-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
 }
-.navbar-container {
+.breadcrumb-container {
   display: flex;
-  align-content: center;
   justify-content: space-around;
 }
-.directory-container {
+.table-container {
   display: flex;
+  justify-content: space-around;
 }
-.directory-info {
-  font-weight: lighter;
+.table {
+  flex: 1 1 80%;
 }
-.content-container {
+.control {
+  border: 0.125rem solid #000;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-wrap: wrap;
 }
 /* modal background */
 .modal {
@@ -75,4 +81,9 @@ input, a, button {
 .test-img {
   max-width: 100%;
   height: auto;
+}
+@media (max-width: 768px) {
+  .control {
+    flex-direction: column;
+  }
 }

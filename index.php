@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="Sergio Núñez Meneses">
-    <script src="https://use.fontawesome.com/275ae55494.js"></script>
+    <!-- <script src="https://use.fontawesome.com/275ae55494.js"></script> -->
     <link rel="stylesheet" href="main.css">
     <title>File Explorer</title>
   </head>
@@ -12,6 +12,43 @@
 
     <?php
 
+    if (isset($_POST['create'])) {
+      $new_file = $_POST['new_file'];
+      if (!in_array($new_file, $dir_content)) {
+        if (is_file($new_file)) {
+          echo "yes";
+        } else {
+          echo "no, is a directory";
+        }
+        /*
+        $content = "This is a dummy line";
+        $fp = fopen($_SERVER['DOCUMENT_ROOT'] . '/' . $new_file, "wb");
+        fwrite($fp, $content);
+        fclose($fp);
+        echo "File successfully created!";
+        */
+      } else {
+        echo "File already exists!";
+      }
+      echo "<meta http-equiv='refresh' content='0'>";
+        /*
+        if (!file_exists($new_file)) {
+          $content = "This is a dummy line";
+          $fp = fopen($_SERVER['DOCUMENT_ROOT'] . '/' . $new_file, "wb");
+          fwrite($fp, $content);
+          fclose($fp);
+          echo "File successfully created!";
+        } else {
+          echo "The file already exists!";
+        }
+      } else {
+        mkdir($_SERVER['DOCUMENT_ROOT'] . '/' . $new_file);
+        echo "Folder successfully created!";
+      }
+      */
+    }
+
+    /* ----------- CHANGE DIRECTORY ----------- */
     // get absolute path
     define('ROOT_DIR', realpath(__DIR__));
 
@@ -28,7 +65,7 @@
     echo '</div>';
 
     /* ----------- CHANGE DIRECTORY ----------- */
-    echo '<div class="current-directory-container">';
+    echo '<div class="cwd-container">';
     // check if a folder has been clicked
     if (isset($_POST['selected_item'])) {
       $selected_item = $_POST['selected_item']; // store folder path
@@ -40,20 +77,18 @@
       }
     }
     /* ----------- CHECK CURRENT DIRECTORY ----------- */
-    // remove '/' from path and split it into individual items
-    $cwd = explode(DIRECTORY_SEPARATOR, getcwd());
     // check whether the cwd is different than the virtualhost
     if (getcwd() !== ROOT_DIR) {
-      $last_directory = $cwd[sizeof($cwd) - 1]; // always get the last directory of the path
-      $parent_directory = DIRECTORY_SEPARATOR . $last_directory . DIRECTORY_SEPARATOR;
-      echo "<h4>parent directory: <span class=\"directory-info\">$parent_directory</span></h4><br>";
+      // $last_directory = $cwd[sizeof($cwd) - 1]; // always get the last directory of the path
+      // $parent_directory = DIRECTORY_SEPARATOR . $last_directory . DIRECTORY_SEPARATOR;
+      // echo "<h4>parent directory: <span class=\"directory-info\">$parent_directory</span></h4><br>";
     } else {
-      $parent_directory = DIRECTORY_SEPARATOR; // if it's the virtualhost, prepend just a slash
+      // $parent_directory = DIRECTORY_SEPARATOR; // if it's the virtualhost, prepend just a slash
     }
     /* --------------------------------- */
 
     /* ----------- FORMAT SERVER URL ----------- */
-    echo '<div class="current-directory-container">';
+    echo '<div class="cwd-container">';
     // absolute path without script folder
     $base_dir = dirname(ROOT_DIR);
     // format url for files
@@ -64,70 +99,162 @@
     /* --------------------------------- */
 
     /* ----------- NAVBAR MENU ----------- */
-    echo '<div class="navbar-container">';
+    echo '<div class="breadcrumb-container">';
+    echo '<table>'; // begin table
+    echo '<tr>';
+    // remove '/' from path and split it into individual items
+    $cwd = explode(DIRECTORY_SEPARATOR, getcwd());
     $cwd_accum = ''; // initialize increment
     // iterate over root directory
-    foreach ($cwd as $item) {
-      $cwd_accum = $cwd_accum . $item . DIRECTORY_SEPARATOR; // recursive path increment
+    foreach ($cwd as $file) {
+      $cwd_accum = $cwd_accum . $file . DIRECTORY_SEPARATOR; // recursive path increment
+      echo '<td>';
       echo '<form method="post" enctype="application/x-www-form-urlencoded">';
       echo "<input type=\"hidden\" name=\"selected_item\" value=\"" . $cwd_accum . "\">";
-      echo "<button type=\"submit\">$item</button>";
+      echo "<button type=\"submit\">$file</button>";
       echo "</form>";
+      echo '</td>';
     }
+    echo '</tr>';
+    echo '</table>';
     echo '</div>';
     /* --------------------------------- */
 
     /* ----------- DISPLAY CURRENT DIRECTORY ITEMS ----------- */
     echo '<main>';
-    echo '<section><div class="content-container">';
+    echo '<section><div class="table-container">';
+    echo '<div class="table">';
+    echo '<table>'; // begin table
+    echo '<tr><th>File</th><th>Size</th><th>Type</th><th>Extension</th><th>Date</th></tr>';
     // get current working directory
     $cwd_content = scandir(getcwd());
     // iterate over current working directory
-    foreach ($cwd_content as $item) {
-      $item_name = preg_replace('/\\.[^.\\s]{3,4}$/', '', $item); // get item name
-      $file_type = str_replace('/', ' ', mime_content_type(realpath($item))); // get file type
+    foreach ($cwd_content as $file) {
+      $file_name = preg_replace('/\\.[^.\\s]{3,4}$/', '', $file); // get item name
+      $file_size = filesize($file); // get file size
+      $file_type = str_replace('/', ' ', mime_content_type(realpath($file))); // get file type
+      $file_extension = pathinfo(realpath($file)); // get file extension
+      $file_creation_date = date('d-m-y', filectime($file)); // get file creation date
       // check whether the item is a directory
-      if (is_dir(realpath($item))) {
+      if (is_dir(realpath($file))) {
         // add <form> tag with post method for changing directory
-        if ($item === '.') {
+        if ($file === '.') {
+          echo '<tr>';
+          // name
+          echo '<td>';
           echo '<form method="post" enctype="application/x-www-form-urlencoded">';
-          echo "<input type=\"hidden\" name=\"selected_item\" value=\"" . realpath($item) . "\">";
+          echo "<input type=\"hidden\" name=\"selected_item\" value=\"" . realpath($file) . "\">";
           echo "<a class=\"fa fa-folder-open-o\">";
-          echo "<button type=\"submit\">$item_name</button>";
+          echo "<button type=\"submit\">$file_name</button>";
           echo '</a>';
-          echo '</form><br>';
+          echo '</form>';
+          echo '</td>';
+          // size
+          echo "<td>$file_size</td>";
+          // type
+          echo "<td>$file_type</td>";
+          echo "<td>no</td>";
+          // date
+          echo "<td>$file_creation_date</td>";
+          echo '</tr>';
         } else {
+          echo '<tr>';
+          echo '<td>';
           echo '<form method="post" enctype="application/x-www-form-urlencoded">';
-          echo "<input type=\"hidden\" name=\"selected_item\" value=\"" . realpath($item) . "\">";
+          echo "<input type=\"hidden\" name=\"selected_item\" value=\"" . realpath($file) . "\">";
           echo "<a class=\"fa fa-folder-o\">";
-          echo "<button type=\"submit\">$item_name</button>";
+          echo "<button type=\"submit\">$file_name</button>";
           echo '</a>';
-          echo '</form><br>';
+          echo '</form>';
+          echo '</td>';
+          echo "<td>$file_size</td>";
+          echo "<td>$file_type</td>";
+          echo "<td>no</td>";
+          echo "<td>$file_creation_date</td>";
+          echo '</tr>';
         }
         // or a file
-      } elseif (is_file(realpath($item))) {
-        $item = DIRECTORY_SEPARATOR . $item;
+      } elseif (is_file(realpath($file))) {
+        $file = DIRECTORY_SEPARATOR . $file;
         // add <anchor> tag to open file
         if (strpos($file_type, 'image') !== false) {
-          echo "<a class=\"fa fa-file-image-o file\" href=\"${url}${item}\">";
-          echo "<button type=\"submit\">$item_name</button>";
-          echo '</a><br>';
+          echo '<tr>';
+          echo '<td>';
+          echo "<a class=\"fa fa-file-image-o file\" href=\"${url}${file}\">";
+          echo "<button type=\"submit\">$file_name</button>";
+          echo '</a>';
+          echo '</td>';
+          echo "<td>$file_size</td>";
+          echo "<td>$file_type</td>";
+          echo "<td>" . $file_extension['extension'] . "</td>";
+          echo "<td>$file_creation_date</td>";
+          echo '</tr>';
         } elseif (strpos($file_type, 'text') !== false) {
-          echo "<a class=\"fa fa-file-text-o file\" href=\"${url}${item}\">";
-          echo "<button type=\"submit\">$item_name</button>";
-          echo '</a><br>';
+          echo '<tr>';
+          echo '<td>';
+          echo "<a class=\"fa fa-file-text-o file\" href=\"${url}${file}\">";
+          echo "<button type=\"submit\">$file_name</button>";
+          echo '</a>';
+          echo '</td>';
+          echo "<td>$file_size</td>";
+          echo "<td>$file_type</td>";
+          echo "<td>" . $file_extension['extension'] . "</td>";
+          echo "<td>$file_creation_date</td>";
+          echo '</tr>';
         } elseif (strpos($file_type, 'audio') !== false) {
-          echo "<a class=\"fa fa-file-sound-o file\" href=\"${url}${item}\">";
-          echo "<button type=\"submit\">$item_name</button>";
-          echo '</a><br>';
+          echo '<tr>';
+          echo '<td>';
+          echo "<a class=\"fa fa-file-sound-o file\" href=\"${url}${file}\">";
+          echo "<button type=\"submit\">$file_name</button>";
+          echo '</a>';
+          echo '</td>';
+          echo "<td>$file_size</td>";
+          echo "<td>$file_type</td>";
+          echo "<td>" . $file_extension['extension'] . "</td>";
+          echo "<td>$file_creation_date</td>";
+          echo '</tr>';
         } else {
-          echo "<a class=\"fa fa-file-o file\" href=\"${url}${item}\">";
-          echo "<button type=\"submit\">$item_name</button>";
-          echo '</a><br>';
+          echo '<tr>';
+          echo '<td>';
+          echo "<a class=\"fa fa-file-o file\" href=\"${url}${file}\">";
+          echo "<button type=\"submit\">$file_name</button>";
+          echo '</a>';
+          echo '</td>';
+          echo "<td>$file_size</td>";
+          echo "<td>$file_type</td>";
+          echo "<td>" . $file_extension['extension'] . "</td>";
+          echo "<td>$file_creation_date</td>";
+          echo '</tr>';
         }
       }
+      echo '</tr>';
     }
-    echo '</div></section>';
+    echo '</table>'; // end table
+    echo '</div>';
+    /* --------------------------------- */
+
+    /* ----------- CREATE AND DELETE FILES ----------- */
+    echo '<div class="control">';
+    echo '<div>';
+    echo '<form method="post" enctype="application/x-www-form-urlencoded">';
+    echo "<input type=\"text\" name=\"new_file\" value=\"\" placeholder=\"file or folder\">";
+    echo '<button type="submit" name="create">Create</button>';
+    echo "<input type=\"text\" name=\"new_file\" value=\"\" placeholder=\"file or folder\">";
+    echo '<button type="submit" name="delete">Delete</button>';
+    echo '</form>';
+    echo '</div>';
+    echo '<div>';
+    echo '<form method="post" enctype="application/x-www-form-urlencoded">';
+    echo "<input type=\"text\" name=\"new_file\" value=\"\" placeholder=\"file or folder\">";
+    echo '<button type="submit" name="copy">Copy</button>';
+    echo "<input type=\"text\" name=\"new_file\" value=\"\" placeholder=\"file or folder\">";
+    echo '<button type="submit" name="move">Move</button>';
+    echo '</form>';
+    echo '</div>';
+    echo '</div>';
+    echo '</div>'; // end table container divs
+    echo '</section>';
+    echo '</main>';
     /* --------------------------------- */
 
     /* ----------- MODAL TEST ----------- */
@@ -140,15 +267,11 @@
     echo "</div>";
     echo "</div></section>";
     /* --------------------------------- */
-    echo '</main>';
 
 
 
     /* ----------- TEST ZONE ----------- */
-
     /* --------------------------------- */
-
-
 
 
 
