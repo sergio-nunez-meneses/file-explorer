@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="Sergio Núñez Meneses">
-    <!-- <script src="https://use.fontawesome.com/275ae55494.js"></script> -->
+    <script src="https://use.fontawesome.com/275ae55494.js"></script>
     <link rel="stylesheet" href="main.css">
     <title>File Explorer</title>
   </head>
@@ -12,45 +12,16 @@
 
     <?php
 
-    if (isset($_POST['create'])) {
-      $new_file = $_POST['new_file'];
-      if (!in_array($new_file, $dir_content)) {
-        if (is_file($new_file)) {
-          echo "yes";
-        } else {
-          echo "no, is a directory";
-        }
-        /*
-        $content = "This is a dummy line";
-        $fp = fopen($_SERVER['DOCUMENT_ROOT'] . '/' . $new_file, "wb");
-        fwrite($fp, $content);
-        fclose($fp);
-        echo "File successfully created!";
-        */
-      } else {
-        echo "File already exists!";
-      }
-      echo "<meta http-equiv='refresh' content='0'>";
-        /*
-        if (!file_exists($new_file)) {
-          $content = "This is a dummy line";
-          $fp = fopen($_SERVER['DOCUMENT_ROOT'] . '/' . $new_file, "wb");
-          fwrite($fp, $content);
-          fclose($fp);
-          echo "File successfully created!";
-        } else {
-          echo "The file already exists!";
-        }
-      } else {
-        mkdir($_SERVER['DOCUMENT_ROOT'] . '/' . $new_file);
-        echo "Folder successfully created!";
-      }
-      */
+    /* ----------- PREVENT MOVING TO VIRTUALHOST'S PARENT FOLDER ----------- */
+    /* check whether the cwd is different than the virtualhost
+    if (getcwd() !== ) {
+    } else {
     }
+    */
+    /* --------------------------------- */
 
-    /* ----------- CHANGE DIRECTORY ----------- */
-    // get absolute path
-    define('ROOT_DIR', realpath(__DIR__));
+    /* ----------- SET DIRECTORY VARIABLES ----------- */
+    define('ROOT_DIR', realpath(__DIR__)); // get absolute path
 
     echo '<header>';
     echo '<div class="header-container">';
@@ -58,10 +29,10 @@
     $protocol = empty($_SERVER['HTTPS']) ? 'http' : 'https';
     // domain name
     $domain = $_SERVER['SERVER_NAME'];
-    // concatenate all variables to get the complete base URL
+    // concatenate all variables to get the complete base url
     $base_url = "${protocol}://${domain}";
-    // display url
-    echo "<h4>server root: <span class=\"directory-info\">$base_url</span></h3>";
+    // display base url
+    echo "<h5>server root: <span class=\"directory-info\">$base_url</span></h5>";
     echo '</div>';
 
     /* ----------- CHANGE DIRECTORY ----------- */
@@ -69,23 +40,10 @@
     // check if a folder has been clicked
     if (isset($_POST['selected_item'])) {
       $selected_item = $_POST['selected_item']; // store folder path
-      // check whether to change the current directory or not
-      if (chdir($selected_item)) {
-        chdir($selected_item);
-      } else {
-        chdir(getcwd());
-      }
-    }
-    /* ----------- CHECK CURRENT DIRECTORY ----------- */
-    // check whether the cwd is different than the virtualhost
-    if (getcwd() !== ROOT_DIR) {
-      // $last_directory = $cwd[sizeof($cwd) - 1]; // always get the last directory of the path
-      // $parent_directory = DIRECTORY_SEPARATOR . $last_directory . DIRECTORY_SEPARATOR;
-      // echo "<h4>parent directory: <span class=\"directory-info\">$parent_directory</span></h4><br>";
+      chdir($selected_item);
     } else {
-      // $parent_directory = DIRECTORY_SEPARATOR; // if it's the virtualhost, prepend just a slash
+      $selected_item = getcwd();
     }
-    /* --------------------------------- */
 
     /* ----------- FORMAT SERVER URL ----------- */
     echo '<div class="cwd-container">';
@@ -93,10 +51,46 @@
     $base_dir = dirname(ROOT_DIR);
     // format url for files
     $url = str_replace($base_dir, $base_url, $selected_item);
-    echo "<h2>url: <span class=\"directory-info\">$url</span></h2>";
+    echo "<h3>url: <span class=\"directory-info\">$url</span></h3>";
     echo '</div>';
     echo '</header>';
-    /* --------------------------------- */
+
+    /* ----------- CREATE FILE OR FOLDER ----------- */
+    if (isset($_POST['create'])) {
+      $create_file = $_POST['create_file'];
+      if (!in_array($create_file, scandir(getcwd()))) {
+        if(strpos($create_file, '.') === false) {
+          echo "<script type=\"text/javascript\"> alert('folder!'); </script>";
+        } else {
+          echo "<script type=\"text/javascript\"> alert('file!'); </script>";
+        }
+      } else {
+        echo "<script type=\"text/javascript\"> alert('exists already!'); </script>";
+      }
+    }
+    /* ----------- DELETE FILE ----------- */
+    if (isset($_POST['delete'])) {
+      $delete_file = $_POST['delete_file'];
+      echo "<script type=\"text/javascript\">
+        sure();
+        function sure() {
+          const ask = confirm('do you really, really want to delete this file?');
+          if (ask == true) {
+            const askAgain = confirm('are you sure?');
+            if (askAgain == true) {
+              const answer = prompt('but, what does this file did to you?');
+              if (answer !== 'yes') {
+                confirm('do you really, really want to delete this file?');
+              } else if (answer !== 'no') {
+                confirm('are you sure?');
+              } else {
+                alert('fine, fine, file deleted');
+              }
+            }
+          }
+        }
+        </script>";
+    }
 
     /* ----------- NAVBAR MENU ----------- */
     echo '<div class="breadcrumb-container">';
@@ -118,7 +112,6 @@
     echo '</tr>';
     echo '</table>';
     echo '</div>';
-    /* --------------------------------- */
 
     /* ----------- DISPLAY CURRENT DIRECTORY ITEMS ----------- */
     echo '<main>';
@@ -231,23 +224,20 @@
     }
     echo '</table>'; // end table
     echo '</div>';
-    /* --------------------------------- */
 
     /* ----------- CREATE AND DELETE FILES ----------- */
     echo '<div class="control">';
     echo '<div>';
     echo '<form method="post" enctype="application/x-www-form-urlencoded">';
-    echo "<input type=\"text\" name=\"new_file\" value=\"\" placeholder=\"file or folder\">";
+    echo "<input type=\"text\" name=\"create_file\" placeholder=\"file or folder\">";
     echo '<button type="submit" name="create">Create</button>';
-    echo "<input type=\"text\" name=\"new_file\" value=\"\" placeholder=\"file or folder\">";
+    echo "<input type=\"text\" name=\"delete_file\" placeholder=\"file or folder\">";
     echo '<button type="submit" name="delete">Delete</button>';
     echo '</form>';
-    echo '</div>';
-    echo '<div>';
     echo '<form method="post" enctype="application/x-www-form-urlencoded">';
-    echo "<input type=\"text\" name=\"new_file\" value=\"\" placeholder=\"file or folder\">";
+    echo "<input type=\"text\" name=\"copy_file\" value=\"\" placeholder=\"file or folder\">";
     echo '<button type="submit" name="copy">Copy</button>';
-    echo "<input type=\"text\" name=\"new_file\" value=\"\" placeholder=\"file or folder\">";
+    echo "<input type=\"text\" name=\"move_file\" value=\"\" placeholder=\"file or folder\">";
     echo '<button type="submit" name="move">Move</button>';
     echo '</form>';
     echo '</div>';
@@ -255,7 +245,6 @@
     echo '</div>'; // end table container divs
     echo '</section>';
     echo '</main>';
-    /* --------------------------------- */
 
     /* ----------- MODAL TEST ----------- */
     echo "<section><div id=\"myModal\" class=\"modal\">";
