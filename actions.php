@@ -1,43 +1,31 @@
 <?php
 
-/* ----------- CREATE FILE OR FOLDER ----------- */
+/* ----------- CREATE FILE ----------- */
 if (isset($_POST['create'])) {
   $create_file = $_POST['create_file'];
-  if (!in_array($create_file, scandir(getcwd()))) {
+  if (!in_array($create_file, scandir($path))) {
     if(strpos($create_file, '.') === false) {
-      echo "<script type=\"text/javascript\"> alert('folder!'); </script>";
-      mkdir(getcwd() . DIRECTORY_SEPARATOR . $create_file, 0777);
+      header("Location:index.php?folder=created");
+      // mkdir(getcwd() . DIRECTORY_SEPARATOR . $create_file, 0777);
     } else {
-      echo "<script type=\"text/javascript\"> alert('file!'); </script>";
-      fopen(getcwd() . DIRECTORY_SEPARATOR . $create_file, 'a+');
+      header("Location:index.php?file=created");
+      // fopen(getcwd() . DIRECTORY_SEPARATOR . $create_file, 'a+');
     }
   } else {
-    echo "<script type=\"text/javascript\"> alert('exists already!'); </script>";
+    header("Location:index.php?exists=yes");
   }
+}
+/* ----------- COPY FILE ----------- */
+if (isset($_POST['copy'])) {
+  $copy_file = $_POST['copy_file'];
+    header("Location:index.php?copied=yes");
+    // copy($copy_file, 'C:\wamp64\www\snunezmeneses\files-explorer\trash' . DIRECTORY_SEPARATOR . $copy_file);
 }
 /* ----------- DELETE FILE ----------- */
 if (isset($_POST['delete'])) {
   $delete_file = $_POST['delete_file'];
-  echo "<script type=\"text/javascript\">
-    sure();
-    function sure() {
-      const ask = confirm('do you really, really want to delete this file?');
-      if (ask == true) {
-        const askAgain = confirm('are you sure?');
-        if (askAgain == true) {
-          const answer = prompt('but, what does this file did to you?');
-          if (answer !== 'yes') {
-            confirm('do you really, really want to delete this file?');
-          } else if (answer !== 'no') {
-            confirm('are you sure?');
-          } else {
-            alert('fine, fine, file deleted');
-          }
-        }
-      }
-    }
-    </script>";
-    rename($delete_file, 'C:\wamp64\www\snunezmeneses\files-explorer\trash' . DIRECTORY_SEPARATOR . $delete_file);
+    header("Location:index.php?deleted=yes");
+    // rename($delete_file, 'C:\wamp64\www\snunezmeneses\files-explorer\trash' . DIRECTORY_SEPARATOR . $delete_file);
 }
 
 ?>

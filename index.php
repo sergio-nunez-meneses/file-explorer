@@ -29,10 +29,12 @@
           </span></h3>
           <h3>root directory: <span class="directory-info">
             <?php echo ROOT_DIR; ?>
+          </span></h3>
         </div>
       </section>
     </header>
 
+    <!-- CURRENT DIRECTORY CONTENT -->
     <main>
       <section>
         <div class="">
@@ -47,7 +49,7 @@
           }
           chdir($from);
 
-          // format correct url to open files
+          // format url to open files
           $url = str_replace(dirname(ROOT_DIR), $base_url, $from) . '/';
           echo "<br>server url: $url";
 
@@ -78,19 +80,55 @@
     <section>
       <div class="control">
         <div>
-          <form method="post" enctype="application/x-www-form-urlencoded">
+          <form method="post" action="actions.php" enctype="application/x-www-form-urlencoded">
             <input type="text" name="create_file" placeholder="file or folder">
             <button type="submit" name="create">Create</button>
             <input type="text" name=\"delete_file" placeholder="file or folder">
             <button type="submit" name="delete">Delete</button>
           </form>
-          <form method="post" enctype="application/x-www-form-urlencoded">
+          <form method="post" action="actions.php" enctype="application/x-www-form-urlencoded">
             <input type="text" name="copy_file" placeholder="file or folder">
             <button type="submit" name="copy">Copy</button>
             <input type="text" name="move_file" placeholder="file or folder">
             <button type="submit" name="move">Move</button>
           </form>
         </div>
+
+        <?php
+
+        if (!empty($_GET['exists']) && $_GET['exists'] == "yes") {
+          echo "<p>File already exists</p>";
+        } elseif (!empty($_GET['folder']) && $_GET['folder'] == "created") {
+          echo "<p>Folder created</p>";
+        } elseif (!empty($_GET['file']) && $_GET['file'] == "created") {
+          echo "<p>File created</p>";
+        } elseif (!empty($_GET['copied']) && $_GET['copied'] == "yes") {
+          echo "<p>File copied</p>";
+        } elseif (!empty($_GET['deleted']) && $_GET['deleted'] == "yes") {
+          echo "<script type=\"text/javascript\">
+            sure();
+            function sure() {
+              const ask = confirm('do you really, really want to delete this file?');
+              if (ask == true) {
+                const askAgain = confirm('are you sure?');
+                if (askAgain == true) {
+                  const answer = prompt('but, what does this file did to you?');
+                  if (answer !== 'yes') {
+                    confirm('do you really, really want to delete this file?');
+                  } else if (answer !== 'no') {
+                    confirm('are you sure?');
+                  } else {
+                    alert('fine, fine, file deleted');
+                  }
+                }
+              }
+            }
+            </script>";
+          echo "<p>File deleted</p>";
+        }
+
+        ?>
+
       </div>
     </section>
 
