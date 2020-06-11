@@ -1,0 +1,73 @@
+// out: style.css, sourcemap: true, compress: true;
+// main: style.less;
+
+// declaring variables
+@width: 100%;
+@height: 100%;
+@min-height: 100%;
+@display: flex;
+@padding: 0.5rem;
+@background-color: rgba(0,0,0,0.8);
+@font-size: calc(0.5rem + 0.5vw);
+@font-weight: lighter;
+@text-color: rgba(255,255,255,0.8);
+@text-decoration: none;
+
+// example of variables
+@link-color: #428bca;
+@link-color-hover: darken(@link-color, 10%);
+// example of nested rule with parent selector
+a, button {
+  font-size: @font-size;
+  color: @link-color;
+  text-decoration: @text-decoration;
+  &:hover {
+    color: @link-color-hover;
+    text-decoration: @text-decoration;
+  }
+}
+
+// CSS body
+html {
+  height: @height;
+}
+body {
+  min-height: @min-height;
+  background-color: @background-color;
+  font-family: Helvetica, sans-serif;
+  font-size: @font-size;
+  font-weight: @font-weight;
+  color: @text-color;
+}
+.directory-info {
+  font-weight: lighter;
+}
+
+
+/* containers */
+.header-container, .directory-container, .ctw-container, .breadcrumb-container, .table-container, .table, .control, .modal-content {
+  display: @display;
+  padding: @padding;
+  justify-content: space-between;
+}
+.table {
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+table, th, td {
+  border: 0.0625rem solid @text-color;
+}
+
+/* modal background */
+.modal {
+  width: @width;
+  height: @height;
+  top: 0;
+  left: 0;
+  padding-top: 2rem;
+  background-color: @background-color;
+  position: fixed;
+  z-index: 1;
+  overflow-y: scroll;
+  display: none;
+}
