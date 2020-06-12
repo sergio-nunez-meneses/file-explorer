@@ -7,10 +7,10 @@ include 'constants.php';
 include 'actions.php';
 
 /* CHECK CURRENT WORKING DIRECTORY OR CHANGE IT ON FOLDER CLICK */
-if (!empty($_GET['dir'])) $from = $_GET['dir'];
-else $from = $init_dir;;
+if (!empty($_GET['dir'])) $cwd = $_GET['dir'];
+else $cwd = $init_dir;;
 
-chdir($from);
+chdir($cwd);
 
 /* an idea for denying access to folder before virtualhost
 if current directory is not equal to dirname(ROOT_DIR, 2) "change directory" else "not change" */
@@ -32,12 +32,18 @@ if current directory is not equal to dirname(ROOT_DIR, 2) "change directory" els
               <?php
 
               // break absolute path into individual items
-              $cwd = explode(DIRECTORY_SEPARATOR, getcwd());
-              $cwd_accum = ''; // initialize increment
+              $breadcrumb_menu = explode(DIRECTORY_SEPARATOR, getcwd());
+              $path_accum = ''; // initialize increment
+              $is_home = false;
               // iterate over root directory
-              foreach ($cwd as $item) {
-                $cwd_accum = $cwd_accum . $item . DIRECTORY_SEPARATOR; // recursive path increment
-                echo "<td><a href=\"?dir=$cwd_accum\" title=\"$cwd_accum\">$item</a></td>";
+              foreach ($breadcrumb_menu as $item) {
+                $path_accum .= $item . DIRECTORY_SEPARATOR; // recursive path increment
+                if ($item === $home_dir) {
+                  $is_home = true;
+                }
+                if ($is_home) {
+                  echo "<td><a href=\"?dir=$path_accum\" title=\"$path_accum\">$item</a></td>";
+                }
               }
 
               ?>
@@ -50,80 +56,92 @@ if current directory is not equal to dirname(ROOT_DIR, 2) "change directory" els
 
 </header>
 
-<!-- LIST CURRENT DIRECTORY CONTENT -->
 <main>
 
-  <section>
-    <!-- ACTION FORM -->
-    <div class="control">
-      <form method="post" action="" enctype="application/x-www-form-urlencoded">
-        <input type="text" name="create_file" placeholder="file or folder">
-        <button type="submit" name="create">Create</button>
-        <input type="text" name="delete_file" placeholder="file or folder">
-        <button type="submit" name="delete">Delete</button>
-        <input type="text" name="copy_file" placeholder="file or folder">
-        <button type="submit" name="copy">Copy</button>
-        <input type="text" name="move_file" placeholder="file or folder">
-        <button type="submit" name="move">Move</button>
-        <!-- to do for copying qnd pasting files (create this with a loop)
-        <select>
-          <option selected>Folder 1</option>
-          <option>Folder 2</option>
-          <option>Folder 3</option>
-          <option>Folder 4</option>
-          <option>Folder 5</option>
-          <option>Folder 6</option>
-          <option>Folder 7</option>
-          <option>Folder 8</option>
-        </select> -->
-      </form>
-    </div>
-  </section>
-  <section>
-    <div class="table-container">
-      <table>
-      <?php
+  <div class="main-container">
+    <!-- LIST CURRENT DIRECTORY CONTENT -->
+    <section>
+      <div class="table-container">
+        <table>
+        <?php
 
-      // format url to open files
-      $url = str_replace(dirname(ROOT_DIR), $base_url, $from) . '/';
-      // scan directory
-      if (!is_dir($from)) die ("Cannot open directory: $from"); // break
-        // open current directory
-        if ($dh = opendir($from)) {
-          // iterate over current directory
-          while(($file = readdir($dh)) !== false) {
-            // skip '.', '..' and '.git'
-            if ($file == '.' || $file == '..' || $file == '.git')
-            continue;
-            $path = $from . '/' . $file;
+        // format url to open files
+        $url = str_replace(dirname(ROOT_DIR), $base_url, $cwd) . '/';
+        // scan directory
+        if (!is_dir($cwd)) die ("Cannot open directory: $cwd"); // break
+          // open current directory
+          if ($dh = opendir($cwd)) {
+            // iterate over current directory
+            while(($file = readdir($dh)) !== false) {
+              // skip '.', '..' and '.git'
+              if ($file == '.' || $file == '..' || $file == '.git')
+              continue;
+              $path = $cwd . '/' . $file;
 
-            /* get file information */
-            $file_name = preg_replace('/\\.[^.\\s]{3,4}$/', '', $file);
-            $file_size = filesize($file);
-            $file_type = str_replace('/', ' ', mime_content_type(realpath($file)));
-            $file_extension = pathinfo(realpath($file));
-            $file_creation_date = date('d-m-y', filectime($file));
+              /* get file information */
+              $file_name = preg_replace('/\\.[^.\\s]{3,4}$/', '', $file);
+              $file_size = filesize($file);
+              $file_type = str_replace('/', ' ', mime_content_type(realpath($file)));
+              $file_extension = pathinfo(realpath($file));
+              $file_creation_date = date('d-m-y', filectime($file));
 
-            /* list current directory content */
-            if (is_dir($path)) {
-              echo '<tr>';
-              echo '<td><i class="fa fa-folder-o"></i><a href="?dir='. urlencode($path) . '" title="' . $path .'">' . $file .'</a></td>';
-              echo "<td>$file_size</td><td>$file_type</td><td>no</td><td>$file_creation_date</td>";
-              echo '</tr>';
-            } else {
-              echo '<tr>';
-              echo "<td><i class=\"fa fa-file-o\"></i><a class=\"file\" href=\"${url}${file}\" title=\"${url}/${file}\">$file</a></td>";
-              echo "<td>$file_size</td><td>$file_type</td><td>" . $file_extension['extension'] . "</td><td>$file_creation_date</td>";
-              echo '</tr>';
+              /* list current directory content */
+              if (is_dir($path)) {
+                echo '<tr>';
+                echo '<td><i class="fa fa-folder-o"></i><a href="?dir='. urlencode($path) . '" title="' . $path .'">' . $file .'</a></td>';
+                echo "<td>$file_size</td><td>$file_type</td><td>no</td><td>$file_creation_date</td>";
+                echo '</tr>';
+              } else {
+                echo '<tr>';
+                echo "<td><i class=\"fa fa-file-o\"></i><a class=\"file\" href=\"${url}${file}\" title=\"${url}/${file}\">$file</a></td>";
+                echo "<td>$file_size</td><td>$file_type</td><td>" . $file_extension['extension'] . "</td><td>$file_creation_date</td>";
+                echo '</tr>';
+              }
             }
+            closedir($dh);
           }
-          closedir($dh);
-        }
 
-      ?>
-      </table>
-    </div>
-  </section>
+        ?>
+        </table>
+      </div>
+    </section>
+
+    <!-- ACTION FORM -->
+    <section>
+      <div class="control-container">
+        <form method="post" enctype="application/x-www-form-urlencoded">
+          <input type="text" name="create_file" placeholder="file or folder">
+          <button type="submit" name="create">Create</button>
+          <input type="text" name="delete_file" placeholder="file or folder">
+          <button type="submit" name="delete">Delete</button>
+          <input type="text" name="copy_file" placeholder="file or folder">
+          <button type="submit" name="copy">Copy</button>
+          <input type="text" name="move_file" placeholder="file or folder">
+          <button type="submit" name="move">Move</button>
+            <?php
+
+            $cwd = scandir(getcwd());
+
+            echo "<select name=\"from_dir\">";
+            foreach ($cwd as $file) {
+              if (is_dir($file) && $file !== '.' && $file !== '..') {
+                echo "<option value=\"$file\" selected>$file</option>";
+              }
+            }
+            echo "</select>";
+            echo "<select name=\"to_dir\">";
+            foreach ($cwd as $file) {
+              if (is_dir($file) && $file !== '.' && $file !== '..') {
+                echo "<option value=\"$file\" selected>$file</option>";
+              }
+            }
+            echo "</select>";
+
+            ?>
+        </form>
+      </div>
+    </section>
+  </div>
 
 </main>
 

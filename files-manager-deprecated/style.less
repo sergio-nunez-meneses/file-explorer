@@ -46,15 +46,8 @@ i {
 .breadcrumb-title {
   order: 2;
 }
-.main-container {
+.manager-container {
   display: @display;
-}
-.table-container {
-  display: @display;
-}
-.control-container {
-  display: @display;
-  flex-direction: column;
 }
 table {
   width: auto;
@@ -63,7 +56,7 @@ table {
 }
 td {
   padding: @padding - 0.3;
-  border: 0.0125rem solid #ddd;
+  border: 0.025rem solid lighter(@text-color, 50%);
 }
 // example of function
 @var: #004590;
@@ -81,7 +74,7 @@ td {
 @link-color: #428bca;
 @link-color-hover: darken(@link-color, 10%);
 // example of nested rule with parent selector
-a, button, select, option {
+a, button {
   font-size: @font-size;
   color: @link-color;
   text-decoration: @text-decoration;
@@ -89,4 +82,51 @@ a, button, select, option {
     color: @link-color-hover;
     text-decoration: @text-decoration;
   }
+}
+
+
+
+
+
+
+
+
+
+/* modal background */
+.modal {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  padding-top: 2rem;
+  background-color: rgba(0,0,0,0.6);
+  position: fixed;
+  z-index: 1;
+  overflow-y: scroll;
+  display: none;
+}
+/* modal content */
+.modal-content {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  padding: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+/* modal control buttons */
+.go-to-parent-directory {
+  top: 10px;
+  right: 25px;
+  color: white;
+  font-size: 35px;
+  font-weight: bold;
+  position: absolute;
+  cursor: pointer;
+}
+.test-img {
+  max-width: 100%;
+  height: auto;
 }

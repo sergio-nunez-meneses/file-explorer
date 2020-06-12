@@ -8,7 +8,7 @@ if (!empty($_GET['dir'])) {
 }
 
 // path to trash
-$trash_path = realpath(__DIR__) . DIRECTORY_SEPARATOR . 'home' . DIRECTORY_SEPARATOR . 'trash' . DIRECTORY_SEPARATOR;
+$trash_path = realpath(__DIR__) . DIRECTORY_SEPARATOR . 'trash' . DIRECTORY_SEPARATOR;
 
 /* ----------- CREATE FILE ----------- */
 if (isset($_POST['create'])) {
@@ -33,12 +33,8 @@ if (isset($_POST['copy'])) {
 /* ----------- DELETE FILE ----------- */
 if (isset($_POST['delete'])) {
   $delete_file = $_POST['delete_file'];
-  if (!in_array($delete_file, scandir($trash_path))) {
-    rename($cwd . DIRECTORY_SEPARATOR . $delete_file, $trash_path . $delete_file);
-    echo "<script type=\"text/javascript\"> confirm('do you really, really want to delete this file?'); </script>";
-  } else {
-    echo "<script type=\"text/javascript\"> alert('file already exists in trash'); </script>";
-  }
+  rename($cwd . DIRECTORY_SEPARATOR . $delete_file, $trash_path . $delete_file);
+  echo "<script type=\"text/javascript\"> confirm('do you really, really want to delete this file?'); </script>";
 }
 
 ?>
