@@ -1,68 +1,20 @@
-/* VARIABLES */
-
-// slide index for lightbox
-let slideIndex = 1;
-
-// close modal
-const closeModal = () => {
-  const close = document.getElementById("close");
-  close.addEventListener("click", e => {
-    e.preventDefault();
-    console.log('modal closed');
-    document.getElementById("myModal").style.display = "none";
-  });
-}
-closeModal();
+let myWindow;
 
 // get all <a> tags containing files and open modal
-const openModal = () => {
+const openFile = () => {
   const files = document.querySelectorAll('[class*="file"]');
-  console.log(files);
   for (let n in files) {
     if (files.hasOwnProperty(n)) {
       files[n].addEventListener("click", e => {
         e.preventDefault();
-        console.log('modal opened');
-        document.getElementById("myModal").style.display = "block";
-        currentSlide(files);
+        const url = files[n].getAttribute("href");
+        files[n].style.display = 'block';
+        files[n].style.width = "100%";
+        files[n].style.height = "auto";
+        myWindow = window.open(url, "myWindow", 'width=1000px,height=500px,resizable=1');
       });
     }
   }
 }
 // call function
-openModal();
-
-// display first modal slide
-showSlides(slideIndex);
-// modal functions
-function currentSlide(n) {
-  showSlides(slideIndex = n);
-}
-function showSlides(n) {
-  let slides = document.getElementsByClassName("slide");
-  // display selected thumbnail
-  slides[slideIndex-1].style.display = "block";
-}
-
-// keyboard control
-function logKey(e) {
-  if (keys[event.keyCode] !== undefined) {
-    console.log(e);
-    if (keys[event.keyCode] === "esc") {
-      console.log('modal closed');
-      document.getElementById("myModal").style.display = "none";
-    }
-  }
-}
-
-/* CLASSES AND OBJECTS */
-
-// keyboard 'esc' key
-const keys = {
-  27: "esc"
-}
-
-/* EVENT LISTENERS */
-
-// control modal with "left", "right" and "esc" keys
-document.addEventListener('keydown', logKey);
+openFile();
