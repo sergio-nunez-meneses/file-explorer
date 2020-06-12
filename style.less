@@ -1,17 +1,74 @@
 // out: style.css, sourcemap: true, compress: true;
 // main: style.less;
 
-// declaring variables
-@width: 100%;
+/* dimensions */
 @height: 100%;
 @min-height: 100%;
 @display: flex;
+/* box model */
 @padding: 0.5rem;
-@background-color: rgba(0,0,0,0.8);
+/* background */
+@background-color: darken(@link-color, 40%);
+/* font */
 @font-size: calc(0.5rem + 0.5vw);
 @font-weight: lighter;
-@text-color: rgba(255,255,255,0.8);
+@text-color: #FDF5E6;
 @text-decoration: none;
+/* table */
+
+
+
+// CSS body
+html {
+  height: @height;
+}
+body {
+  min-height: @min-height;
+  background-color: @background-color;
+  font-family: Helvetica, sans-serif;
+  font-size: @font-size;
+  font-weight: @font-weight;
+  color: @text-color;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+	position: relative;
+}
+i {
+  padding: 0 @padding;
+}
+.breadcrumb-container {
+  display: @display;
+  justify-content: space-between;
+}
+.breadcrumb-content {
+  align-self: center;
+}
+.breadcrumb-title {
+  order: 2;
+}
+.manager-container {
+  display: @display;
+}
+table {
+  width: auto;
+  border: 0.0625rem solid darken(@text-color, 10%);
+  background-color: darken(@link-color, 45%);
+}
+td {
+  padding: @padding - 0.3;
+  border: 0.025rem solid lighter(@text-color, 50%);
+}
+// example of function
+@var: #004590;
+.table-container tr {
+  background-color: darken(@link-color, 45%);
+  &:hover{
+    background-color: fadeout(@var, 50%)
+  }
+}
+
+
+
 
 // example of variables
 @link-color: #428bca;
@@ -27,47 +84,49 @@ a, button {
   }
 }
 
-// CSS body
-html {
-  height: @height;
-}
-body {
-  min-height: @min-height;
-  background-color: @background-color;
-  font-family: Helvetica, sans-serif;
-  font-size: @font-size;
-  font-weight: @font-weight;
-  color: @text-color;
-}
-.directory-info {
-  font-weight: lighter;
-}
 
 
-/* containers */
-.header-container, .directory-container, .ctw-container, .breadcrumb-container, .table-container, .table, .control, .modal-content {
-  display: @display;
-  padding: @padding;
-  justify-content: space-between;
-}
-.table {
-  flex-direction: column;
-  flex-wrap: nowrap;
-}
-table, th, td {
-  border: 0.0625rem solid @text-color;
-}
+
+
+
+
+
 
 /* modal background */
 .modal {
-  width: @width;
-  height: @height;
+  width: 100%;
+  height: 100%;
   top: 0;
   left: 0;
   padding-top: 2rem;
-  background-color: @background-color;
+  background-color: rgba(0,0,0,0.6);
   position: fixed;
   z-index: 1;
   overflow-y: scroll;
   display: none;
+}
+/* modal content */
+.modal-content {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  padding: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+/* modal control buttons */
+.go-to-parent-directory {
+  top: 10px;
+  right: 25px;
+  color: white;
+  font-size: 35px;
+  font-weight: bold;
+  position: absolute;
+  cursor: pointer;
+}
+.test-img {
+  max-width: 100%;
+  height: auto;
 }

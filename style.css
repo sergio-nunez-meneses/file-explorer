@@ -1,3 +1,53 @@
+/* dimensions */
+/* box model */
+/* background */
+/* font */
+/* table */
+html {
+  height: 100%;
+}
+body {
+  min-height: 100%;
+  background-color: #0e2132;
+  font-family: Helvetica, sans-serif;
+  font-size: calc(1rem);
+  font-weight: lighter;
+  color: #FDF5E6;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+  position: relative;
+}
+i {
+  padding: 0 0.5rem;
+}
+.breadcrumb-container {
+  display: flex;
+  justify-content: space-between;
+}
+.breadcrumb-content {
+  align-self: center;
+}
+.breadcrumb-title {
+  order: 2;
+}
+.manager-container {
+  display: flex;
+}
+table {
+  width: auto;
+  border: 0.0625rem solid #f9e2b7;
+  background-color: #08141e;
+}
+td {
+  padding: 0.2rem;
+  border: 0.025rem solid lighter(#FDF5E6, 50%);
+}
+.table-container tr {
+  background-color: #08141e;
+}
+.table-container tr:hover {
+  background-color: rgba(0, 69, 144, 0.5);
+}
 a,
 button {
   font-size: calc(1rem);
@@ -9,42 +59,6 @@ button:hover {
   color: #3071a9;
   text-decoration: none;
 }
-html {
-  height: 100%;
-}
-body {
-  min-height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
-  font-family: Helvetica, sans-serif;
-  font-size: calc(1rem);
-  font-weight: lighter;
-  color: rgba(255, 255, 255, 0.8);
-}
-.directory-info {
-  font-weight: lighter;
-}
-/* containers */
-.header-container,
-.directory-container,
-.ctw-container,
-.breadcrumb-container,
-.table-container,
-.table,
-.control,
-.modal-content {
-  display: flex;
-  padding: 0.5rem;
-  justify-content: space-between;
-}
-.table {
-  flex-direction: column;
-  flex-wrap: nowrap;
-}
-table,
-th,
-td {
-  border: 0.0625rem solid rgba(255, 255, 255, 0.8);
-}
 /* modal background */
 .modal {
   width: 100%;
@@ -52,9 +66,34 @@ td {
   top: 0;
   left: 0;
   padding-top: 2rem;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.6);
   position: fixed;
   z-index: 1;
   overflow-y: scroll;
   display: none;
+}
+/* modal content */
+.modal-content {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  padding: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+/* modal control buttons */
+.go-to-parent-directory {
+  top: 10px;
+  right: 25px;
+  color: white;
+  font-size: 35px;
+  font-weight: bold;
+  position: absolute;
+  cursor: pointer;
+}
+.test-img {
+  max-width: 100%;
+  height: auto;
 }

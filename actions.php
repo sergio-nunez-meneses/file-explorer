@@ -7,6 +7,7 @@ if (!empty($_GET['dir'])) {
   $cwd = getcwd() . DIRECTORY_SEPARATOR;
 }
 
+// path to trash
 $trash_path = realpath(__DIR__) . DIRECTORY_SEPARATOR . 'trash' . DIRECTORY_SEPARATOR;
 
 /* ----------- CREATE FILE ----------- */
